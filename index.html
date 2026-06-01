@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Seas Entertainment</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    object-fit: contain;
+}
+
+#controls {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}
+
+select {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+}
+
+@media (max-width: 768px) {
+    select {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+
+    <div id="controls">
+        <select id="quality">
+            <option value="1080">1080p</option>
+            <option value="720">720p</option>
+        </select>
+    </div>
+
+    <video
+        id="player"
+        controls
+        autoplay
+        playsinline
+        preload="metadata"
+    >
+    </video>
+
+</div>
+
+<script>
+const videos = {
+    "1080": "https://af1.downet.net/download/1780433124/6a1def64a8d5a/The.Peanut.Butter.Falcon.2019.1080p.BluRay.aflaam.com.mp4",
+    "720": "https://af1.downet.net/download/1780433125/6a1def6539f5b/The.Peanut.Butter.Falcon.2019.720p.BluRay.aflaam.com.mp4"
+};
+
+const player = document.getElementById("player");
+const quality = document.getElementById("quality");
+
+function loadQuality(q) {
+    const currentTime = player.currentTime || 0;
+    const wasPaused = player.paused;
+
+    player.src = videos[q];
+
+    player.addEventListener("loadedmetadata", function restore() {
+        player.currentTime = currentTime;
+
+        if (!wasPaused) {
+            player.play().catch(() => {});
+        }
+
+        player.removeEventListener("loadedmetadata", restore);
+    });
+}
+
+quality.addEventListener("change", () => {
+    loadQuality(quality.value);
+});
+
+// Default quality
+loadQuality("1080");
+</script>
+
+</body>
+</html>
