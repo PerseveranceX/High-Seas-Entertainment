@@ -4,54 +4,55 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+
 <style>
 body {
     margin: 0;
-    background: black;
+    background: #000;
 }
 
-video {
+#player {
     width: 100%;
-    height: auto;
-    display: block;
 }
 </style>
 </head>
 <body>
 
-<select id="quality">
-    <option value="1080">1080p</option>
-    <option value="720">720p</option>
-</select>
-
-<video id="player" controls autoplay playsinline>
+<video id="player" controls playsinline>
 </video>
 
-<script>
-const player = document.getElementById("player");
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
-const videos = {
+<script>
+const sources = {
     1080: "https://af1.downet.net/download/1780433124/6a1def64a8d5a/The.Peanut.Butter.Falcon.2019.1080p.BluRay.aflaam.com.mp4",
     720:  "https://af1.downet.net/download/1780433125/6a1def6539f5b/The.Peanut.Butter.Falcon.2019.720p.BluRay.aflaam.com.mp4",
 };
 
-function setQuality(q) {
-    const t = player.currentTime;
-    const paused = player.paused;
+const video = document.getElementById('player');
 
-    player.src = videos[q];
+video.src = sources[1080];
 
-    player.onloadedmetadata = () => {
-        player.currentTime = t;
-        if (!paused) player.play();
-    };
-}
+const player = new Plyr(video, {
+    settings: ['quality', 'speed'],
+    quality: {
+        default: 1080,
+        options: [1080, 720],
+        forced: true,
+        onChange: q => {
+            const t = video.currentTime;
+            const paused = video.paused;
 
-document.getElementById("quality").onchange = e => {
-    setQuality(e.target.value);
-};
+            video.src = sources[q];
 
-setQuality("1080");
+            video.onloadedmetadata = () => {
+                video.currentTime = t;
+                if (!paused) video.play();
+            };
+        }
+    }
+});
 </script>
 
 </body>
